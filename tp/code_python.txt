@@ -1,0 +1,76 @@
+import pygame
+import sys
+
+# Initialisation de Pygame
+pygame.init()
+
+# Définition des couleurs
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+BLACK = (0, 0, 0)
+GREEN=(128,128,128)
+# Définition des dimensions de la fenêtre
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 600
+
+# Définition de la taille et de l'espacement des rectangles
+RECT_WIDTH = 60
+RECT_HEIGHT = 60
+GAP = 20
+
+# Création de la fenêtre
+window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+pygame.display.set_caption("Interface Pygame")
+
+# Création de la police
+font = pygame.font.SysFont(None, 40)
+
+# Fonction pour afficher le texte sur la fenêtre
+def draw_text(text, font, color, surface, x, y):
+    textobj = font.render(text, 1, color)
+    textrect = textobj.get_rect()
+    textrect.center = (x, y)
+    surface.blit(textobj, textrect)
+
+# Fonction principale
+def main():
+    running = True
+    clock = pygame.time.Clock()
+
+    # Création des rectangles pour les lettres de A à Z
+    letters = [chr(i) for i in range(65, 91)]
+    letter_rects = []
+    for i, letter in enumerate(letters):
+        x = (i % 7) * (RECT_WIDTH + GAP) + 100
+        y = (i // 7) * (RECT_HEIGHT + GAP) + 100
+        letter_rects.append(pygame.Rect(x, y, RECT_WIDTH, RECT_HEIGHT))
+
+    while running:
+        window.fill(WHITE)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                for i, key in enumerate(letters):
+                    if event.key == pygame.K_a + i:
+                        # Mettre la touche en rouge
+                        pygame.draw.rect(window, RED, letter_rects[i])
+                        pygame.display.update()
+
+                        # Afficher la touche pressée dans la console et sur l'interface
+                        print("Touche pressée:", key, "(ID:", event.key, ")")
+
+        # Dessiner les rectangles avec les lettres
+        for i, rect in enumerate(letter_rects):
+            pygame.draw.rect(window, BLACK, rect, 2)  # Dessiner les contours des rectangles
+            draw_text(letters[i], font, BLACK, window, rect.x + RECT_WIDTH // 2, rect.y + RECT_HEIGHT // 2)
+
+        pygame.display.update()
+        clock.tick(30)
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
